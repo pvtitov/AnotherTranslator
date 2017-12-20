@@ -2,6 +2,7 @@ package pvtitov.anothertranslator;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -25,8 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = findViewById(R.id.main_list);
-        String[] listExample = {"one", "two", "three"};
-        recyclerView.setAdapter(new RecyclerAdapter());
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerAdapter recyclerAdapter = new RecyclerAdapter();
+        recyclerView.setAdapter(recyclerAdapter);
+        List<String> wordsTestList = new ArrayList<>();
+        for (int i = 0; i < 100; i++) wordsTestList.add("item " + i);
+        recyclerAdapter.setWords(wordsTestList);
+        recyclerAdapter.notifyDataSetChanged();
     }
 
 
@@ -52,36 +58,26 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    static private class RecyclerAdapter extends RecyclerView.Adapter {
-
-        /*
-        Обработчик клика
-        */
-        OnItemClickListener mClickListener;
-
-        interface OnItemClickListener {
-            void onClick();
-        }
-
-        void setOnItemClickListener(OnItemClickListener listener) {
-            mClickListener = listener;
-        }
-
-
+    static private class RecyclerAdapter extends RecyclerView.Adapter<ItemHolder> {
 
         private List<String> mWords = new ArrayList<>();
 
 
+        void setWords(List<String> words) {
+            mWords = words;
+        }
+
+
         @Override
-        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
             return new ItemHolder(view);
         }
 
         @Override
-        public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+        public void onBindViewHolder(ItemHolder holder, int position) {
             String item = mWords.get(position);
-            //Отобразить в поле mWord холдера item: holder.
+            holder.mWord.setText(item);
         }
 
         @Override
@@ -90,7 +86,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    static class ItemHolder extends RecyclerView.ViewHolder{
+
+    static class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView mWord;
         TextView mTranslation;
@@ -100,6 +97,11 @@ public class MainActivity extends AppCompatActivity {
 
             mWord = itemView.findViewById(R.id.word);
             mTranslation = itemView.findViewById(R.id.translation);
+        }
+
+        @Override
+        public void onClick(View v) {
+
         }
     }
 }
