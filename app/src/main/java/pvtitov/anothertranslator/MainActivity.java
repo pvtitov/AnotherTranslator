@@ -12,10 +12,14 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import pvtitov.anothertranslator.model.Word;
+import pvtitov.anothertranslator.model.WordsManager;
+
 public class MainActivity extends AppCompatActivity {
+
+    RecyclerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,12 +31,15 @@ public class MainActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.main_list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        RecyclerAdapter recyclerAdapter = new RecyclerAdapter();
-        recyclerView.setAdapter(recyclerAdapter);
-        List<String> wordsTestList = new ArrayList<>();
-        for (int i = 0; i < 100; i++) wordsTestList.add("item " + i);
-        recyclerAdapter.setWords(wordsTestList);
-        recyclerAdapter.notifyDataSetChanged();
+        mAdapter = new RecyclerAdapter();
+        recyclerView.setAdapter(mAdapter);
+
+        testRecyclerView();
+    }
+
+    private void testRecyclerView() {
+        for (int i = 0; i < 100; i++) WordsManager.getInstance().add(new Word("Слово " + i, "Перевод " + i));
+        mAdapter.notifyDataSetChanged();
     }
 
 
@@ -60,13 +67,7 @@ public class MainActivity extends AppCompatActivity {
 
     static private class RecyclerAdapter extends RecyclerView.Adapter<ItemHolder> {
 
-        private List<String> mWords = new ArrayList<>();
-
-
-        void setWords(List<String> words) {
-            mWords = words;
-        }
-
+        private List<Word> mWords = WordsManager.getInstance().getAll();
 
         @Override
         public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -76,8 +77,9 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ItemHolder holder, int position) {
-            String item = mWords.get(position);
-            holder.mWord.setText(item);
+            Word item = mWords.get(position);
+            holder.mWord.setText(item.getWord());
+            holder.mTranslation.setText(item.getTranslation());
         }
 
         @Override
@@ -89,8 +91,8 @@ public class MainActivity extends AppCompatActivity {
 
     static class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        TextView mWord;
-        TextView mTranslation;
+        private TextView mWord;
+        private TextView mTranslation;
 
         ItemHolder(View itemView) {
             super(itemView);
