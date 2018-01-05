@@ -34,11 +34,6 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new RecyclerAdapter();
         recyclerView.setAdapter(mAdapter);
 
-        testRecyclerView();
-    }
-
-    private void testRecyclerView() {
-        for (int i = 0; i < 100; i++) WordsManager.getInstance().add(new Word("Слово " + i, "Перевод " + i));
         mAdapter.notifyDataSetChanged();
     }
 
@@ -65,9 +60,10 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    static private class RecyclerAdapter extends RecyclerView.Adapter<ItemHolder> {
+    // Адаптер для RecyclerView
+    private class RecyclerAdapter extends RecyclerView.Adapter<ItemHolder> {
 
-        private List<Word> mWords = WordsManager.getInstance().getAll();
+        private List<Word> mWords = WordsManager.getInstance(MainActivity.this).extractAll();
 
         @Override
         public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -89,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    static class ItemHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    class ItemHolder extends RecyclerView.ViewHolder{
 
         private TextView mWord;
         private TextView mTranslation;
@@ -99,11 +95,8 @@ public class MainActivity extends AppCompatActivity {
 
             mWord = itemView.findViewById(R.id.word);
             mTranslation = itemView.findViewById(R.id.translation);
-        }
 
-        @Override
-        public void onClick(View v) {
-
+            itemView.setOnClickListener(v -> WordsManager.getInstance(MainActivity.this).remove(mWord.getText().toString()));
         }
     }
 }

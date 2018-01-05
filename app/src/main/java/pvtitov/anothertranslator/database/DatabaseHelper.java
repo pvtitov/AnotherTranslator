@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     public static final int VERSION = 1;
-    public static final String DATABASE_NAME = "historyDatabase.db";
+    public static final String DATABASE_NAME = "translator_base.db";
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, VERSION);
@@ -19,8 +19,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table " + DatabaseWrapper.HistoryTable.TABLE_NAME + "( _id integer primary key autoincrement, "
-        + DatabaseWrapper.HistoryTable.Columns.WORDS + ", " + DatabaseWrapper.HistoryTable.Columns.TRANSLATIONS + ")");
+        db.execSQL("create table " + DatabaseWrapper.TranslationsTable.TABLE_NAME + "( _id integer primary key autoincrement, "
+        + DatabaseWrapper.TranslationsTable.Columns.WORDS + ", " + DatabaseWrapper.TranslationsTable.Columns.TRANSLATIONS + ")");
     }
 
     @Override

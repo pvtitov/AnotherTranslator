@@ -16,8 +16,8 @@ public class WordsCursorWrapper extends CursorWrapper {
     }
 
     public Word getWord(){
-        String word = getString(getColumnIndex(DatabaseWrapper.HistoryTable.Columns.WORDS));
-        String translation = getString(getColumnIndex(DatabaseWrapper.HistoryTable.Columns.TRANSLATIONS));
+        String word = getString(getColumnIndex(DatabaseWrapper.TranslationsTable.Columns.WORDS));
+        String translation = getString(getColumnIndex(DatabaseWrapper.TranslationsTable.Columns.TRANSLATIONS));
 
         return new Word(word, translation);
     }

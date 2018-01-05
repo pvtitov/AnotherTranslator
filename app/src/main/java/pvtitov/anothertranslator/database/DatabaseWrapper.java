@@ -5,11 +5,11 @@ package pvtitov.anothertranslator.database;
  */
 
 public class DatabaseWrapper {
-    public static final class HistoryTable {
-        public static final String TABLE_NAME = "words_and_translations";
+    public static final class TranslationsTable {
+        public static final String TABLE_NAME = "words_with_translations";
 
         public static final class Columns {
-            public static final String WORDS = "words_column";
+            public static final String WORDS = "words";
             public static final String TRANSLATIONS = "translations";
         }
     }
