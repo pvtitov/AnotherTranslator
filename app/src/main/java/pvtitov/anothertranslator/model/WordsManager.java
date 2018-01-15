@@ -22,19 +22,16 @@ public class WordsManager {
     //Singleton
     private static WordsManager instance;
     public static WordsManager getInstance(Context context) {
-        if (instance == null) instance = new WordsManager(context);
+        if (instance == null) instance = new WordsManager(context.getApplicationContext());
         return instance;
     }
 
 
     private SQLiteDatabase mDatabase;
     private WordsManager(Context context){
-        mDatabase = new DatabaseHelper(context.getApplicationContext())
+        mDatabase = new DatabaseHelper(context)
                 .getWritableDatabase();
     }
-
-    // В этом поле хранятся ссылки на все объекты Word
-    private List<Word> mWords = new ArrayList<>();
 
     // Метод, описывающий универсальный запрос к базе данных
     private WordsCursorWrapper query(String whereClause, String[] whereArgs){
@@ -49,14 +46,15 @@ public class WordsManager {
 
     // Возвращает список всех слов из базы данных
     public List<Word> extractAll() {
+        List<Word> words = new ArrayList<>();
         try (WordsCursorWrapper cursor = query(null, null)) {
             cursor.moveToLast();
             while (!cursor.isBeforeFirst()) {
-                mWords.add(cursor.getWord());
+                words.add(cursor.getWord());
                 cursor.moveToPrevious();
             }
         }
-        return mWords;
+        return words;
     }
 
     // Осуществляет поиск слова по базе - возвращает объект Word

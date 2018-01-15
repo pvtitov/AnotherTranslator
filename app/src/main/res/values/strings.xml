@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">AnotherTranslator</string>
-    <string name="action_settings">Settings</string>
+    <string name="add_word">Adding a word</string>
 </resources>

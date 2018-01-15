@@ -1,5 +1,6 @@
 package pvtitov.anothertranslator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -7,9 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import java.util.List;
@@ -30,40 +30,37 @@ public class MainActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = findViewById(R.id.main_list);
+        recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new RecyclerAdapter();
-        recyclerView.setAdapter(mAdapter);
-
-        mAdapter.notifyDataSetChanged();
-    }
-
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (mAdapter == null) {
+            mAdapter = new RecyclerAdapter();
+            mAdapter.setData(WordsManager.getInstance(this).extractAll());
+            recyclerView.setAdapter(mAdapter);
+        }
+        else {
+            reloadAdapter();
         }
 
-        return super.onOptionsItemSelected(item);
+        ImageButton addButton = findViewById(R.id.add_word);
+        addButton.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AddActivity.class);
+            startActivity(intent);
+        });
+    }
+
+    private void reloadAdapter() {
+        mAdapter.setData(WordsManager.getInstance(this).extractAll());
+        mAdapter.notifyDataSetChanged();
     }
 
     // Адаптер для RecyclerView
     private class RecyclerAdapter extends RecyclerView.Adapter<ItemHolder> {
 
-        private List<Word> mWords = WordsManager.getInstance(MainActivity.this).extractAll();
+        private List<Word> mWords;
+
+        public void setData(List<Word> mWords) {
+            this.mWords = mWords;
+        }
 
         @Override
         public ItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -96,7 +93,11 @@ public class MainActivity extends AppCompatActivity {
             mWord = itemView.findViewById(R.id.word);
             mTranslation = itemView.findViewById(R.id.translation);
 
-            itemView.setOnClickListener(v -> WordsManager.getInstance(MainActivity.this).remove(mWord.getText().toString()));
+            itemView.setOnLongClickListener(v -> {
+                WordsManager.getInstance(MainActivity.this).remove(mWord.getText().toString());
+                reloadAdapter();
+                return false;
+            });
         }
     }
 }

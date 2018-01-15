@@ -17,7 +17,22 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <ImageButton
+                android:id="@+id/add_word"
+                android:layout_width="@dimen/button_side"
+                android:layout_height="@dimen/button_side"
+                android:scaleType="fitXY"
+                android:clickable="true"
+                android:focusable="true"
+                android:layout_gravity="end|top"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/add_word"
+                android:tint="@android:color/white"
+                app:srcCompat="@android:drawable/ic_input_add" />
+
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
