@@ -1,5 +1,6 @@
 package pvtitov.anothertranslator;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -7,20 +8,17 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import pvtitov.anothertranslator.model.Word;
+import pvtitov.anothertranslator.model.WordsManager;
 import pvtitov.anothertranslator.networking.RetrofitFactory;
 import pvtitov.anothertranslator.networking.TranslationModel;
 import retrofit2.Call;
@@ -42,9 +40,17 @@ public class AddActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add);
 
         ListView listView = findViewById(R.id.translations_list);
-        List<String> translations = new ArrayList<>();
-        ArrayAdapter adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, translations);
+        ArrayAdapter<Word> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<Word>());
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // Добавляет выбранное слово в базу и запускаем снова MainActivity
+                WordsManager.getInstance(AddActivity.this).addNew(adapter.getItem(position));
+                Intent intent = new Intent(AddActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         EditText inputWord = findViewById(R.id.input_word);
         inputWord.addTextChangedListener(new TextWatcher() {
@@ -61,25 +67,32 @@ public class AddActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
                 handler.removeCallbacks(reloadSuggestions);
                 reloadSuggestions = () -> {
-                    String word = inputWord.getText().toString();
-                    List<String> suggestions;
-
                     RetrofitFactory.WebService webService = RetrofitFactory.getInstance(BASE_URL).create(RetrofitFactory.WebService.class);
-                    Call<TranslationModel> call = webService.getTranslation(API_KEY, "en-ru", word);
+                    String word = inputWord.getText().toString();
+                    Call<TranslationModel> call = webService.getTranslation(
+                            API_KEY,
+                            "en-ru",
+                            word);
                     call.enqueue(new Callback<TranslationModel>() {
                         @Override
                         public void onResponse(Call<TranslationModel> call, Response<TranslationModel> response) {
-                            List<String> suggestions = response.body().getText();
-                            //TODO доделать получение списка переводов
+                            if (response.isSuccessful()) {
+                                try {
+                                    List<String> translations = response.body().getText();
+                                    adapter.clear();
+                                    for (String translation:translations) adapter.add(new Word(word, translation));
+                                    adapter.notifyDataSetChanged();
+                                } catch (NullPointerException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
 
                         @Override
                         public void onFailure(Call<TranslationModel> call, Throwable t) {
-
+                            t.printStackTrace();
                         }
                     });
-
-                    adapter.notifyDataSetChanged();
                 };
                 handler.postDelayed(reloadSuggestions, DELAY);
             }

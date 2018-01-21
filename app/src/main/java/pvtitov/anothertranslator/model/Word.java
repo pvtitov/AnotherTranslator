@@ -21,4 +21,9 @@ public class Word {
     public String getTranslation() {
         return translation;
     }
+
+    @Override
+    public String toString(){
+        return translation;
+    }
 }
