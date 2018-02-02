@@ -13,11 +13,23 @@
         android:id="@+id/input_word"
         android:textSize="@dimen/font_common"/>
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/translation"
+        android:textSize="@dimen/font_common"/>
+
     <ListView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:id="@+id/translations_list" />
+        android:id="@+id/suggestions" />
 
+    <Button
+        android:id="@+id/confirm"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/save" />
 
 </LinearLayout>
