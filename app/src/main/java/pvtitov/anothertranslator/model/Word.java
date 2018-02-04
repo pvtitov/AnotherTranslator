@@ -1,11 +1,13 @@
 package pvtitov.anothertranslator.model;
 
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by Павел on 23.12.2017.
  */
 
-public class Word {
+public class Word implements Comparable {
     private String word;
     private String translation;
 
@@ -35,5 +37,17 @@ public class Word {
     @Override
     public String toString(){
         return translation;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        Word wordObject;
+        try {
+            wordObject = (Word)o;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(o.toString()
+                    + " - is not instance of Word");
+        }
+        return word.compareTo(wordObject.getWord());
     }
 }

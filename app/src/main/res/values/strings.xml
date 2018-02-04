@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AnotherTranslator</string>
-    <string name="add_word">Adding a word</string>
-    <string name="save">SAVE</string>
+    <string name="add_word">Добавляет слово</string>
+    <string name="save">Сохранить</string>
+    <string name="delete_dialog">Подтвердить удаление</string>
+    <string name="ok">Да</string>
+    <string name="cancel">Нет</string>
 </resources>

@@ -9,8 +9,8 @@ public class DatabaseWrapper {
         public static final String TABLE_NAME = "words_with_translations";
 
         public static final class Columns {
-            public static final String WORDS = "words";
-            public static final String TRANSLATIONS = "translations";
+            public static final String WORD = "word";
+            public static final String TRANSLATION = "translation";
         }
     }
 }

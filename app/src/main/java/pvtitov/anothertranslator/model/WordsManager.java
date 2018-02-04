@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import pvtitov.anothertranslator.database.DatabaseHelper;
@@ -54,12 +55,13 @@ public class WordsManager {
                 cursor.moveToPrevious();
             }
         }
+        Collections.sort(words);
         return words;
     }
 
     // Осуществляет поиск слова по базе - возвращает объект Word
     public Word findByWord(String word) {
-        try(WordsCursorWrapper cursor = query(TranslationsTable.Columns.WORDS + " = ? ", new String[] {word})){
+        try(WordsCursorWrapper cursor = query(TranslationsTable.Columns.WORD + " = ? ", new String[] {word})){
             if (cursor.getCount() == 0){
                 return null;
             }
@@ -70,12 +72,13 @@ public class WordsManager {
 
     private static ContentValues getContentValues(Word word){
         ContentValues values = new ContentValues();
-        values.put(TranslationsTable.Columns.WORDS, word.getWord());
-        values.put(TranslationsTable.Columns.TRANSLATIONS, word.getTranslation());
+        values.put(TranslationsTable.Columns.WORD, word.getWord());
+        values.put(TranslationsTable.Columns.TRANSLATION, word.getTranslation());
         return values;
     }
 
     public void addNew(Word word){
+        remove(word.getWord());
         mDatabase.insert(
                 TranslationsTable.TABLE_NAME,
                 null,
@@ -86,14 +89,14 @@ public class WordsManager {
         mDatabase.update(
                 TranslationsTable.TABLE_NAME,
                 getContentValues(word),
-                TranslationsTable.Columns.WORDS + " = ? ",
+                TranslationsTable.Columns.WORD + " = ? ",
                 new String[]{word.getWord()});
     }
 
     public void remove(String word){
         mDatabase.delete(
                 TranslationsTable.TABLE_NAME,
-                TranslationsTable.Columns.WORDS + " = ? ",
+                TranslationsTable.Columns.WORD + " = ? ",
                 new String[]{word});
     }
 }

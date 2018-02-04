@@ -3,6 +3,7 @@ package pvtitov.anothertranslator;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,8 +19,10 @@ import java.util.List;
 import pvtitov.anothertranslator.model.Word;
 import pvtitov.anothertranslator.model.WordsManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements DeleteDialog.DeleteDialogListener{
 
+    public static final String WORD = "word_to_pass";
+    private static final String DELETE_TAG = "delete_tag";
     RecyclerAdapter mAdapter;
 
     @Override
@@ -43,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         ImageButton addButton = findViewById(R.id.add_word);
+        // добавление новой записи
         addButton.setOnClickListener(v -> {
             Intent intent = new Intent(this, AddActivity.class);
             startActivity(intent);
@@ -52,6 +56,12 @@ public class MainActivity extends AppCompatActivity {
     private void reloadAdapter() {
         mAdapter.setData(WordsManager.getInstance(this).extractAll());
         mAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void onClickPositive(DialogFragment dialogFragment, String word) {
+        WordsManager.getInstance(MainActivity.this).remove(word);
+        reloadAdapter();
     }
 
     // Адаптер для RecyclerView
@@ -74,6 +84,21 @@ public class MainActivity extends AppCompatActivity {
             Word item = mWords.get(position);
             holder.mWord.setText(item.getWord());
             holder.mTranslation.setText(item.getTranslation());
+
+            // редактирование записи
+            holder.mItemView.setOnClickListener(v -> {
+                Intent intent = new Intent(MainActivity.this, AddActivity.class);
+                intent.putExtra(WORD, item.getWord());
+                startActivity(intent);
+            });
+
+            // удаление записей - всех, содержащих слово
+            holder.mItemView.setOnLongClickListener(v -> {
+                DeleteDialog deleteDialog = new DeleteDialog();
+                deleteDialog.setWord(item.getWord());
+                deleteDialog.show(getSupportFragmentManager(), DELETE_TAG);
+                return false;
+            });
         }
 
         @Override
@@ -82,23 +107,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
     class ItemHolder extends RecyclerView.ViewHolder{
 
-        private TextView mWord;
-        private TextView mTranslation;
+        View mItemView;
+        TextView mWord;
+        TextView mTranslation;
 
         ItemHolder(View itemView) {
             super(itemView);
 
-            mWord = itemView.findViewById(R.id.word);
-            mTranslation = itemView.findViewById(R.id.translation);
-
-            itemView.setOnLongClickListener(v -> {
-                WordsManager.getInstance(MainActivity.this).remove(mWord.getText().toString());
-                reloadAdapter();
-                return false;
-            });
+            mItemView = itemView;
+            mWord = mItemView.findViewById(R.id.word);
+            mTranslation = mItemView.findViewById(R.id.translation);
         }
     }
 }

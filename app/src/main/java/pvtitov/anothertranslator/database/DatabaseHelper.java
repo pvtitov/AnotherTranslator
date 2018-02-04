@@ -20,7 +20,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + DatabaseWrapper.TranslationsTable.TABLE_NAME + "( _id integer primary key autoincrement, "
-        + DatabaseWrapper.TranslationsTable.Columns.WORDS + ", " + DatabaseWrapper.TranslationsTable.Columns.TRANSLATIONS + ")");
+        + DatabaseWrapper.TranslationsTable.Columns.WORD
+                + ", " + DatabaseWrapper.TranslationsTable.Columns.TRANSLATION + ")");
     }
 
     @Override

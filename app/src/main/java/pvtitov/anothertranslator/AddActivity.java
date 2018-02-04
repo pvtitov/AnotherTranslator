@@ -41,13 +41,22 @@ public class AddActivity extends AppCompatActivity {
     EditText mForTranslation;
     ArrayAdapter<String> mAdapter;
     Word mWord = new Word();
+    boolean editWord = false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add);
 
+        Intent intentStartedActivity = getIntent();
+        if (intentStartedActivity.hasExtra(MainActivity.WORD)) {
+            mWord = WordsManager.getInstance(this)
+                    .findByWord(intentStartedActivity.getStringExtra(MainActivity.WORD));
+            editWord = true;
+        }
+
         mForTranslation = findViewById(R.id.translation);
+        if (editWord) mForTranslation.setText(mWord.getTranslation());
         Button confirmButton = findViewById(R.id.confirm);
         // Сохраняет перевод в базу, запускает MainActivity
         confirmButton.setOnClickListener(v -> {
@@ -70,6 +79,7 @@ public class AddActivity extends AppCompatActivity {
         listView.setOnItemClickListener((parent, view, position, id) -> mForTranslation.setText(mAdapter.getItem(position)));
 
         mInputWord = findViewById(R.id.input_word);
+        if (editWord) mInputWord.setText(mWord.getWord());
         mInputWord.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
