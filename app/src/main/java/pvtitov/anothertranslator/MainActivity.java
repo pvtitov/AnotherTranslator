@@ -22,7 +22,6 @@ import pvtitov.anothertranslator.model.WordsManager;
 public class MainActivity extends AppCompatActivity implements DeleteDialog.DeleteDialogListener{
 
     public static final String WORD = "word_to_pass";
-    private static final String DELETE_TAG = "delete_tag";
     RecyclerAdapter mAdapter;
 
     @Override
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements DeleteDialog.Dele
             holder.mItemView.setOnLongClickListener(v -> {
                 DeleteDialog deleteDialog = new DeleteDialog();
                 deleteDialog.setWord(item.getWord());
-                deleteDialog.show(getSupportFragmentManager(), DELETE_TAG);
+                deleteDialog.show(getSupportFragmentManager(), DeleteDialog.DELETE_TAG);
                 return false;
             });
         }

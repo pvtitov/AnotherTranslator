@@ -14,6 +14,8 @@ import android.support.v7.app.AlertDialog;
 
 public class DeleteDialog extends DialogFragment {
 
+    public static final String DELETE_TAG = "delete_tag";
+
     public interface DeleteDialogListener {
         void onClickPositive(DialogFragment dialogFragment, String word);
     }
